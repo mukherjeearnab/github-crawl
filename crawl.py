@@ -7,8 +7,6 @@ def get_repo_files(ACCESS_TOKEN, repository, file_ext=''):
     # SET GitHub Personal Access Token
     g = Github(ACCESS_TOKEN)
 
-    repositories = g.search_repositories(query='language:python')
-
     # SET Repository e.g. mukherjeearnab/policing-network
     repo = g.get_repo(repository)
 
