@@ -1,11 +1,11 @@
 from github import Github
 
 
-def get_repo_files(ACCESS_TOKEN, repository, file_ext=''):
+def get_repo_files(access_token, repository, file_ext=''):
     FILES = []
 
     # SET GitHub Personal Access Token
-    g = Github(ACCESS_TOKEN)
+    g = Github(access_token)
 
     # SET Repository e.g. mukherjeearnab/policing-network
     repo = g.get_repo(repository)
@@ -25,21 +25,35 @@ def get_repo_files(ACCESS_TOKEN, repository, file_ext=''):
     return FILES
 
 
-def get_repo_language(ACCESS_TOKEN, repo_language, file_ext=''):
+def get_repo_language(access_token, repo_language, file_ext='', limit=5):
 
     REPO_FILES = []
 
     # SET GitHub Personal Access Token
-    g = Github(ACCESS_TOKEN)
+    g = Github(access_token)
 
     # GET repositories with language
     repositories = g.search_repositories(query=f'language:{repo_language}')
+    # SET index
+    index = 0
 
     # ITERATE repositories
     for repo in repositories:
-        FILES = get_repo_files(access_token=ACCESS_TOKEN,
-                               repository=repo, file_ext=file_ext)
-        REPO = {'repository': repo.name, 'files': FILES}
-        REPO_FILES.append(REPO)
+        # CHECK limit
+        if index >= limit:
+            break
 
-        return REPO_FILES
+        print('CRAWL', repo.full_name)
+        try:
+            FILES = get_repo_files(access_token=access_token,
+                                   repository=repo.full_name, file_ext=file_ext)
+            REPO = {'repository': repo.full_name, 'files': FILES}
+            REPO_FILES.append(REPO)
+            print('DONE', REPO['repository'])
+
+            # Increment index
+            index += 1
+        except Exception as e:
+            print('Error!\n', e)
+
+    return REPO_FILES
